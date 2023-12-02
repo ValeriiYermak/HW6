@@ -1,19 +1,23 @@
 from pathlib import Path
 import shutil
 import sys
-import file_parser 
+import file_parser
 from normalize import normalize
 
+
 def handle_media(file_name: Path, target_folder: Path):
-    target_folder.mkdir(exist_ok = True, parents = True)
+    target_folder.mkdir(exist_ok=True, parents=True)
     file_name.replace(target_folder / normalize(file_name.name))
 
+
 def handle_archive(file_name: Path, target_folder: Path):
-    target_folder.mkdir(exist_ok = True, parents = True)
-    folder_for_file = target_folder / normalize(file_name.name.replace(file_name.suffix, ""))
-    folder_for_file.mkdir(exist_ok = True, parents = True)
+    target_folder.mkdir(exist_ok=True, parents=True)
+    folder_for_file = target_folder / \
+        normalize(file_name.name.replace(file_name.suffix, ""))
+    folder_for_file.mkdir(exist_ok=True, parents=True)
     try:
-        shutil.unpack_archive(str(file_name.absolut()), str(folder_for_file.absolut()))
+        shutil.unpack_archive(str(file_name.absolut()),
+                              str(folder_for_file.absolut()))
     except shutil.ReadError:
         folder_for_file.rmdir()
         return
@@ -31,7 +35,7 @@ def main(folder: Path):
     for file in file_parser.SVG_IMAGES:
         handle_media(file, folder / "images / SVG")
     for file in file_parser.MP4_VIDEO:
-        
+
         handle_media(file, folder / "video/ MP4_VIDEO")
     for file in file_parser.AVI_VIDEO:
         handle_media(file, folder / "video/ AVI_VIDEO")
@@ -64,7 +68,7 @@ def main(folder: Path):
 
     for file in file_parser.MY_OTHER:
         handle_media(file, folder / "MY_OTHER")
-    
+
     for file in file_parser.ARCHIVES:
         handle_archive(file, folder / "ARCHIVES")
 
@@ -74,6 +78,7 @@ def main(folder: Path):
             folder.rmdir()
         except OSError:
             print(f"Error during remove filder{folder}")
+
 
 if __name__ == "__main__":
     folder_process = Path(sys.argv[1])
